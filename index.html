@@ -741,7 +741,7 @@
           </div>
         </div>
       </div>
-      <div class="watermark reveal reveal-delay-3">created by @hano-ios<span class="watermark-version">v1.0.0</span></div>
+      <div class="watermark reveal reveal-delay-3">created by @hano-ios<span class="watermark-version">v1.1.0</span></div>
     </section>
     </div>
   </main>
@@ -773,7 +773,7 @@
       const isSafari = /Safari/i.test(ua) && !isKakao && !isCriOS && !isFxiOS && !isEdgiOS && !isSamsung && !isWhale && !isInstagram && !isNaverApp;
 
       if (window.location.protocol === "https:" && isIOS && isSafari && !isKakao) {
-        appleCalendarLink.href = "webcal://" + icsUrl.host + icsUrl.pathname;
+        appleCalendarLink.href = icsUrl.href;
       } else {
         appleCalendarLink.href = "#";
         appleCalendarLink.addEventListener("click", (event) => {
