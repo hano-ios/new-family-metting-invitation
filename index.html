@@ -5,41 +5,604 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>상견례 초대장</title>
   <style>
+    :root {
+      --bg: #f6efe4;
+      --paper: #fbf5ec;
+      --paper-deep: #f4ebde;
+      --text: #2f2925;
+      --muted: #6f655d;
+      --accent: #b99a76;
+      --line: rgba(185, 154, 118, 0.55);
+      --shadow: 0 22px 60px rgba(108, 88, 66, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: 'Apple SD Gothic Neo', sans-serif;
-      background: #f8f8f8;
+      margin: 0;
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.5), transparent 32%),
+        linear-gradient(180deg, #f8f2e8 0%, #f3eadf 100%);
+      color: var(--text);
+      font-family: "Georgia", "Times New Roman", "Noto Serif KR", serif;
+    }
+
+    .wrap {
+      width: min(100%, 430px);
+      margin: 0 auto;
+      padding: 0 14px 40px;
+      position: relative;
+    }
+
+    .invitation {
+      position: relative;
+      margin-top: 18px;
+      padding: 18px 0 26px;
+      background: linear-gradient(180deg, rgba(251, 245, 236, 0.98), rgba(247, 239, 228, 0.98));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .invitation::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.45), transparent 20%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 18%, transparent 82%, rgba(255, 255, 255, 0.18));
+      pointer-events: none;
+    }
+
+    .sheet {
+      position: relative;
+      margin-bottom: 0;
+      padding: 24px 22px 36px;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .sheet + .sheet {
+      padding-top: 54px;
+    }
+
+    .sheet + .sheet::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 22px;
+      right: 22px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(185, 154, 118, 0.42), transparent);
+    }
+
+    .story::before {
+      content: none;
+    }
+
+    .info::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 22px;
+      right: 22px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(185, 154, 118, 0.42), transparent);
+    }
+
+    .story + .info::before {
+      content: none;
+    }
+
+    .cover {
+      padding-top: 22px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition:
+        opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 {
+      transition-delay: 100ms;
+    }
+
+    .reveal-delay-2 {
+      transition-delay: 180ms;
+    }
+
+    .reveal-delay-3 {
+      transition-delay: 260ms;
+    }
+
+    p.reveal,
+    h2.reveal,
+    .timeline-title.reveal,
+    .timeline-time.reveal,
+    .timeline-desc.reveal,
+    .place-title.reveal,
+    .place-address.reveal,
+    .place-index.reveal,
+    .cover-text.reveal,
+    .name-stack.reveal {
+      transform: translateY(10px);
+    }
+
+    .cover-grid {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      column-gap: 18px;
+      align-items: start;
+    }
+
+    .date-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      color: #181614;
+      font-size: 2.2rem;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
       text-align: center;
-      padding: 40px;
-      color: #333;
     }
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+
+    .date-stack .slash {
+      width: 42px;
+      height: 1px;
+      margin: 16px 0 14px;
+      background: #181614;
     }
-    h1 { font-size: 22px; margin-bottom: 20px; }
-    p { line-height: 1.6; }
-    .info { margin-top: 20px; }
+
+    .cover-photo {
+      width: 100%;
+      aspect-ratio: 3 / 4.8;
+      object-fit: cover;
+      object-position: center 22%;
+      display: block;
+    }
+
+    .cover-bottom {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      column-gap: 18px;
+      margin-top: 18px;
+      align-items: end;
+    }
+
+    .name-stack {
+      color: #181614;
+      font-size: 1.1rem;
+      line-height: 1.35;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+      text-align: center;
+      width: 100%;
+      word-break: keep-all;
+    }
+
+    .cover-text strong {
+      display: block;
+      margin-bottom: 24px;
+      font-size: 1.02rem;
+      font-weight: 600;
+    }
+
+    .cover-text p {
+      margin: 0;
+      color: var(--text);
+      font-size: 0.97rem;
+      line-height: 1.8;
+      word-break: keep-all;
+    }
+
+    .section-date {
+      color: var(--accent);
+      text-align: center;
+      font-size: 1.2rem;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .section-date span {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .section-date .divider {
+      width: 1px;
+      height: 50px;
+      margin: 0 16px;
+      background: var(--line);
+      transform: rotate(30deg);
+    }
+
+    .story {
+      text-align: center;
+      padding-top: 28px;
+      padding-bottom: 32px;
+    }
+
+    .story p {
+      margin: 24px 0 0;
+      color: #403933;
+      font-size: 1rem;
+      line-height: 2.05;
+      word-break: keep-all;
+    }
+
+    .info {
+      text-align: center;
+      padding-top: 28px;
+    }
+
+    .info h2 {
+      margin: 0;
+      color: var(--accent);
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+    }
+
+    .line {
+      width: 74%;
+      height: 1px;
+      margin: 18px auto 28px;
+      background: var(--line);
+    }
+
+    .info-main {
+      font-size: 1.04rem;
+      line-height: 2;
+      font-weight: 600;
+      word-break: keep-all;
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 28px;
+      margin-top: 30px;
+      padding: 8px 0;
+      text-align: left;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      bottom: 18px;
+      left: 14px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(185, 154, 118, 0.1), rgba(185, 154, 118, 0.55), rgba(185, 154, 118, 0.1));
+    }
+
+    .timeline-card {
+      position: relative;
+      padding-left: 42px;
+    }
+
+    .timeline-card::before {
+      content: "";
+      position: absolute;
+      top: 8px;
+      left: 9px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 1.5px solid var(--accent);
+      box-shadow: 0 0 0 6px rgba(251, 245, 236, 0.9);
+    }
+
+    .timeline-time {
+      margin-top: 0;
+      display: block;
+      color: var(--accent);
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1.9;
+      text-align: left;
+    }
+
+    .timeline-body {
+      padding-top: 0;
+      text-align: left;
+    }
+
+    .timeline-title {
+      display: block;
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 600;
+      line-height: 1.65;
+      letter-spacing: -0.01em;
+      text-align: left;
+    }
+
+    .timeline-desc {
+      margin-top: 10px;
+      margin-left: 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 2;
+      letter-spacing: 0.01em;
+      word-break: keep-all;
+      text-align: left;
+    }
+
+    .section-break {
+      height: 70px;
+    }
+
+    .map-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      margin-top: 26px;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .map-button {
+      padding: 11px 18px;
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.45);
+      text-decoration: none;
+      font-size: 0.92rem;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .map-button:hover {
+      background: rgba(255, 255, 255, 0.8);
+      transform: translateY(-1px);
+    }
+
+
+    .place-block {
+      margin-top: 0;
+    }
+
+    .place-block + .place-block {
+      position: relative;
+      padding-top: 24px;
+    }
+
+    .place-block + .place-block::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 56px;
+      height: 1px;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, transparent, rgba(185, 154, 118, 0.55), transparent);
+    }
+
+    .place-minimal {
+      text-align: center;
+    }
+
+    .place-index {
+      color: var(--accent);
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .place-minimal .place-title {
+      margin-top: 8px;
+      font-size: 1.18rem;
+      font-weight: 600;
+      line-height: 1.7;
+      letter-spacing: -0.02em;
+    }
+
+    .place-minimal .place-address {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.95;
+      word-break: keep-all;
+    }
+
+    .place-minimal .button-row {
+      margin-top: 18px;
+    }
+
+    @media (max-width: 420px) {
+      .wrap {
+        padding: 0 8px 28px;
+      }
+
+      .invitation {
+        margin-top: 10px;
+        padding-top: 10px;
+      }
+
+      .sheet {
+        padding: 18px 16px 22px;
+      }
+
+      .sheet + .sheet {
+        padding-top: 40px;
+      }
+
+      .cover-grid,
+      .cover-bottom {
+        grid-template-columns: 58px 1fr;
+        column-gap: 12px;
+      }
+
+      .date-stack {
+        font-size: 1.95rem;
+      }
+
+      .name-stack {
+        font-size: 1rem;
+      }
+
+      .story p,
+      .info-main,
+      .address {
+        font-size: 0.95rem;
+      }
+
+      .timeline-card {
+        padding-left: 34px;
+      }
+
+      .timeline-title {
+        font-size: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>상견례에 초대드립니다</h1>
-    <p>
-      서로의 가족이 한자리에 모여<br>
-      뜻깊은 시간을 갖고자 합니다.<br><br>
-      바쁘시겠지만 참석하시어<br>
-      자리를 빛내주시면 감사하겠습니다.
-    </p>
+  <main class="wrap">
+    <div class="invitation">
+    <section class="sheet cover reveal">
+      <div class="cover-grid">
+        <div class="date-stack reveal reveal-delay-1" aria-label="date">
+          <span>04</span>
+          <span class="slash"></span>
+          <span>11</span>
+        </div>
+        <img class="cover-photo reveal reveal-delay-2" src="main_image.jpg" alt="강영록 한은지 사진">
+      </div>
 
-    <div class="info">
-      <p>📅 날짜: 2026년 6월 ○일</p>
-      <p>⏰ 시간: 오후 ○시</p>
-      <p>📍 장소: ○○식당 (주소)</p>
+      <div class="cover-bottom reveal reveal-delay-3">
+        <div class="name-stack">
+          <div>강영록</div>
+          <div>한은지</div>
+        </div>
+        <div class="cover-text">
+          <strong>초대합니다.</strong>
+          <p>2026. 04. 11. (토) 12:00 pm</p>
+          <p>울산 남구 문수로327번길 14 1층, 돋질로</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sheet story reveal">
+      <div class="section-date reveal reveal-delay-1" aria-hidden="true">
+        <span>04</span>
+        <span class="divider"></span>
+        <span>11</span>
+      </div>
+
+      <p class="reveal reveal-delay-2">
+        함께 하는 첫 걸음에<br>
+        양가 가족분들을 모시고<br>
+        식사를 대접하려고 합니다.
+      </p>
+      <p class="reveal reveal-delay-3">
+        부족한 부분이 있더라도 너그러이 살펴주시고<br>
+        설렘 가득한 봄날,<br>
+        만남의 자리를 빛내주시길 바랍니다.
+      </p>
+    </section>
+
+    <section class="sheet info reveal">
+      <h2 class="reveal reveal-delay-1">일정 안내</h2>
+      <div class="line reveal reveal-delay-1"></div>
+
+      <div class="timeline reveal reveal-delay-2">
+        <div class="timeline-card">
+          <div class="timeline-body">
+            <div class="timeline-title">돋질로 코스요리 한정식</div>
+            <div class="timeline-time">12:00 - 13:30</div>
+            <div class="timeline-desc">
+              B코스 식사
+            </div>
+          </div>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-body">
+            <div class="timeline-title">이동</div>
+            <div class="timeline-desc">
+              차량 20분 소요
+            </div>
+          </div>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-body">
+            <div class="timeline-title">한빔한복 울산점</div>
+            <div class="timeline-time">14:00 - 16:00</div>
+            <div class="timeline-desc">
+              한복 피팅 및 대여
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-break reveal reveal-delay-2" aria-hidden="true"></div>
+      <h2 class="subheading reveal reveal-delay-2">오시는 길</h2>
+      <div class="line reveal reveal-delay-2"></div>
+
+      <div class="map-grid reveal reveal-delay-3">
+        <div class="place-block place-minimal">
+          <div class="place-index">점심식사</div>
+          <div class="place-title">돋질로</div>
+          <div class="place-address">울산 남구 문수로327번길 14 1층</div>
+          <div class="button-row">
+            <a class="map-button" href="https://naver.me/5du4a9Hh" target="_blank" rel="noreferrer">네이버지도</a>
+            <a class="map-button" href="https://place.map.kakao.com/14712709" target="_blank" rel="noreferrer">카카오맵</a>
+            <a class="map-button" href="https://tmap.life/9015d2ad" target="_blank" rel="noreferrer">티맵</a>
+          </div>
+        </div>
+        <div class="place-block place-minimal">
+          <div class="place-index">한복</div>
+          <div class="place-title">한빔한복 울산점</div>
+          <div class="place-address">울산 북구 명촌23길 71 2층</div>
+          <div class="button-row">
+            <a class="map-button" href="https://naver.me/G4Gu6vT5" target="_blank" rel="noreferrer">네이버지도</a>
+            <a class="map-button" href="https://place.map.kakao.com/662395464" target="_blank" rel="noreferrer">카카오맵</a>
+            <a class="map-button" href="https://tmap.life/19c18d23" target="_blank" rel="noreferrer">티맵</a>
+          </div>
+        </div>
+      </div>
+    </section>
     </div>
-  </div>
+  </main>
+  <script>
+    const revealItems = document.querySelectorAll(".reveal");
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.14,
+      rootMargin: "0px 0px -40px 0px"
+    });
+
+    revealItems.forEach((item) => observer.observe(item));
+  </script>
 </body>
 </html>
