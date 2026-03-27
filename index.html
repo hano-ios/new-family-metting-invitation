@@ -253,15 +253,6 @@
       margin-top: 20px;
     }
 
-    .calendar-note {
-      display: none;
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 0.78rem;
-      line-height: 1.7;
-      letter-spacing: 0.01em;
-    }
-
     .calendar-button {
       padding: 10px 16px;
       border: 1px solid var(--line);
@@ -275,6 +266,62 @@
     .calendar-button:hover {
       background: rgba(255, 255, 255, 0.82);
       transform: translateY(-1px);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(53, 42, 35, 0.28);
+      z-index: 20;
+    }
+
+    .modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .modal {
+      width: min(100%, 320px);
+      padding: 24px 20px 18px;
+      background: rgba(251, 245, 236, 0.98);
+      border-radius: 10px;
+      box-shadow: 0 20px 40px rgba(88, 69, 55, 0.18);
+      text-align: center;
+    }
+
+    .modal-title {
+      margin: 0;
+      color: var(--text);
+      font-size: 1.08rem;
+      font-weight: 600;
+      line-height: 1.7;
+    }
+
+    .modal-text {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.8;
+      word-break: keep-all;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 18px;
+    }
+
+    .modal-close {
+      padding: 10px 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.56);
+      color: var(--text);
+      font-size: 0.88rem;
+      cursor: pointer;
     }
 
     .section-date {
@@ -525,6 +572,13 @@
       letter-spacing: 0.08em;
     }
 
+    .watermark-version {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+    }
+
     @media (max-width: 420px) {
       .wrap {
         padding: 0 8px 28px;
@@ -603,10 +657,6 @@
           <div class="calendar-row">
             <a class="calendar-button" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=%EA%B0%95%EC%98%81%EB%A1%9D%20%C2%B7%20%ED%95%9C%EC%9D%80%EC%A7%80%20%EC%83%81%EA%B2%AC%EB%A1%80&dates=20260411T030000Z%2F20260411T043000Z&ctz=Asia%2FSeoul&details=%EA%B0%95%EC%98%81%EB%A1%9D%20%C2%B7%20%ED%95%9C%EC%9D%80%EC%A7%80%20%EC%83%81%EA%B2%AC%EB%A1%80&location=%EC%9A%B8%EC%82%B0%20%EB%82%A8%EA%B5%AC%20%EB%AC%B8%EC%88%98%EB%A1%9C327%EB%B2%88%EA%B8%B8%2014%201%EC%B8%B5%2C%20%EB%8F%8B%EC%A7%88%EB%A1%9C%20%EC%BD%94%EC%8A%A4%EC%9A%94%EB%A6%AC%20%ED%95%9C%EC%A0%95%EC%8B%9D" target="_blank" rel="noreferrer">구글 캘린더</a>
             <a class="calendar-button" id="apple-calendar-link" href="./invitation.ics">애플 캘린더</a>
-          </div>
-          <div class="calendar-note" id="apple-calendar-note">
-            애플 캘린더는 Safari에서 열어주세요.<br>
-            (카톡 브라우저 우측 최하단 공유버튼 &gt; Safari로 열기)
           </div>
         </div>
       </div>
@@ -691,13 +741,23 @@
           </div>
         </div>
       </div>
-      <div class="watermark reveal reveal-delay-3">created by @hano-ios</div>
+      <div class="watermark reveal reveal-delay-3">created by @hano-ios<span class="watermark-version">v1.0.0</span></div>
     </section>
     </div>
   </main>
+  <div class="modal-backdrop" id="safari-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="safari-modal-title">
+      <p class="modal-title" id="safari-modal-title">Safari로 열어주세요!</p>
+      <p class="modal-text">카카오톡 브라우저 기준)<br>우측 최하단 공유버튼 &gt; Safari로 열기</p>
+      <div class="modal-actions">
+        <button class="modal-close" id="safari-modal-close" type="button">확인</button>
+      </div>
+    </div>
+  </div>
   <script>
     const appleCalendarLink = document.getElementById("apple-calendar-link");
-    const appleCalendarNote = document.getElementById("apple-calendar-note");
+    const safariModal = document.getElementById("safari-modal");
+    const safariModalClose = document.getElementById("safari-modal-close");
     if (appleCalendarLink) {
       const icsUrl = new URL("./invitation.ics", window.location.href);
       const ua = navigator.userAgent || "";
@@ -715,11 +775,29 @@
       if (window.location.protocol === "https:" && isIOS && isSafari && !isKakao) {
         appleCalendarLink.href = "webcal://" + icsUrl.host + icsUrl.pathname;
       } else {
-        appleCalendarLink.style.display = "none";
-        if (appleCalendarNote) {
-          appleCalendarNote.style.display = "block";
-        }
+        appleCalendarLink.href = "#";
+        appleCalendarLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          if (safariModal) {
+            safariModal.classList.add("is-open");
+            safariModal.setAttribute("aria-hidden", "false");
+          }
+        });
       }
+    }
+
+    if (safariModal && safariModalClose) {
+      safariModalClose.addEventListener("click", () => {
+        safariModal.classList.remove("is-open");
+        safariModal.setAttribute("aria-hidden", "true");
+      });
+
+      safariModal.addEventListener("click", (event) => {
+        if (event.target === safariModal) {
+          safariModal.classList.remove("is-open");
+          safariModal.setAttribute("aria-hidden", "true");
+        }
+      });
     }
 
     const revealItems = document.querySelectorAll(".reveal");
