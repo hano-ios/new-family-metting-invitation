@@ -702,8 +702,15 @@
       const icsUrl = new URL("./invitation.ics", window.location.href);
       const ua = navigator.userAgent || "";
       const isIOS = /iPhone|iPad|iPod/i.test(ua);
-      const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
       const isKakao = /KAKAOTALK/i.test(ua);
+      const isCriOS = /CriOS/i.test(ua);
+      const isFxiOS = /FxiOS/i.test(ua);
+      const isEdgiOS = /EdgiOS/i.test(ua);
+      const isSamsung = /SamsungBrowser/i.test(ua);
+      const isWhale = /Whale/i.test(ua);
+      const isInstagram = /Instagram/i.test(ua);
+      const isNaverApp = /NAVER/i.test(ua);
+      const isSafari = /Safari/i.test(ua) && !isKakao && !isCriOS && !isFxiOS && !isEdgiOS && !isSamsung && !isWhale && !isInstagram && !isNaverApp;
 
       if (window.location.protocol === "https:" && isIOS && isSafari && !isKakao) {
         appleCalendarLink.href = "webcal://" + icsUrl.host + icsUrl.pathname;
@@ -717,19 +724,4 @@
 
     const revealItems = document.querySelectorAll(".reveal");
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          observer.unobserve(entry.target);
-        }
-      });
-    }, {
-      threshold: 0.14,
-      rootMargin: "0px 0px -40px 0px"
-    });
-
-    revealItems.forEach((item) => observer.observe(item));
-  </script>
-</body>
-</html>
+    const observe
