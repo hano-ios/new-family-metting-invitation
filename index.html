@@ -322,6 +322,7 @@
     .info {
       text-align: center;
       padding-top: 28px;
+      padding-bottom: 20px;
     }
 
     .info h2 {
@@ -475,6 +476,10 @@
       background: linear-gradient(90deg, transparent, rgba(185, 154, 118, 0.55), transparent);
     }
 
+    .map-grid {
+      padding-bottom: 60px;
+    }
+
     .place-minimal {
       text-align: center;
     }
@@ -504,6 +509,14 @@
 
     .place-minimal .button-row {
       margin-top: 18px;
+    }
+
+    .watermark {
+      margin-top: 10px;
+      text-align: center;
+      color: rgba(111, 101, 93, 0.42);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
     }
 
     @media (max-width: 420px) {
@@ -583,7 +596,7 @@
           <p>돋질로 코스요리 한정식</p>
           <div class="calendar-row">
             <a class="calendar-button" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=%EA%B0%95%EC%98%81%EB%A1%9D%E2%9D%A4%EF%B8%8F%ED%95%9C%EC%9D%80%EC%A7%80%20%EC%83%81%EA%B2%AC%EB%A1%80&dates=20260411T030000Z%2F20260411T043000Z&ctz=Asia%2FSeoul&details=%EA%B0%95%EC%98%81%EB%A1%9D%E2%9D%A4%EF%B8%8F%ED%95%9C%EC%9D%80%EC%A7%80%20%EC%83%81%EA%B2%AC%EB%A1%80&location=%EC%9A%B8%EC%82%B0%20%EB%82%A8%EA%B5%AC%20%EB%AC%B8%EC%88%98%EB%A1%9C327%EB%B2%88%EA%B8%B8%2014%201%EC%B8%B5%2C%20%EB%8F%8B%EC%A7%88%EB%A1%9C%20%EC%BD%94%EC%8A%A4%EC%9A%94%EB%A6%AC%20%ED%95%9C%EC%A0%95%EC%8B%9D" target="_blank" rel="noreferrer">구글 캘린더</a>
-            <a class="calendar-button" id="apple-calendar-link" href="#" download="invitation.ics">애플 캘린더</a>
+            <a class="calendar-button" href="invitation.ics">애플 캘린더</a>
           </div>
         </div>
       </div>
@@ -668,31 +681,11 @@
           </div>
         </div>
       </div>
+      <div class="watermark reveal reveal-delay-3">created by @hano-ios</div>
     </section>
     </div>
   </main>
   <script>
-    const appleCalendarLink = document.getElementById("apple-calendar-link");
-    if (appleCalendarLink) {
-      const icsContent = [
-        "BEGIN:VCALENDAR",
-        "VERSION:2.0",
-        "PRODID:-//Invitation//Calendar//KO",
-        "BEGIN:VEVENT",
-        "UID:invitation-20260411-1200@example.com",
-        "DTSTAMP:20260327T000000Z",
-        "DTSTART:20260411T030000Z",
-        "DTEND:20260411T043000Z",
-        "SUMMARY:강영록❤️한은지 상견례",
-        "DESCRIPTION:2026년 4월 11일 토요일 오후 12시, 울산 돋질로",
-        "LOCATION:울산 남구 문수로327번길 14 1층, 돋질로 코스요리 한정식",
-        "END:VEVENT",
-        "END:VCALENDAR"
-      ].join("\r\n");
-
-      appleCalendarLink.href = "data:text/calendar;charset=utf-8," + encodeURIComponent(icsContent);
-    }
-
     const revealItems = document.querySelectorAll(".reveal");
 
     const observer = new IntersectionObserver((entries) => {
